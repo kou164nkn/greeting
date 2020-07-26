@@ -1,7 +1,7 @@
 package greeting
 
 import (
-	"time"
+  "time"
 )
 
 // Do関数は挨拶文を返します.
@@ -10,12 +10,12 @@ import (
 // 10:00-16:59: こんにちは
 // 17:00-03:59: こんばんは
 func Do(t time.Time) string {
-	switch h := t.Hour(); {
-	case h >= 4 && h <= 9:
-		return "おはよう"
-	case h >= 10 && h <= 16:
-		return "こんにちは"
-	default:
-		return "こんばんは"
-	}
+  switch h := t.Hour(); {
+  case h >= 4 && h <= 9:
+    return "おはよう"
+  case h >= 10 && h <= 16:
+    return "こんにちは"
+  default:
+    return "こんばんは"
+  }
 }

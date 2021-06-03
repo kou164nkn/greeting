@@ -3,7 +3,11 @@ package greeting
 import (
 	"fmt"
 	"time"
+
+	"github.com/kou164nkn/greeting/pkg/text"
 )
+
+var lang = text.DefaultLang()
 
 // Do関数は挨拶文を返します.
 // 以下のように指定した時刻によって返す文を変えます.
@@ -14,10 +18,10 @@ func Do() {
 	h := time.Now().Hour()
 	switch {
 	case h >= 4 && h <= 9:
-		fmt.Println("おはよう")
+		fmt.Println(text.GoodMorning(lang))
 	case h >= 10 && h <= 16:
-		fmt.Println("こんにちは")
+		fmt.Println(text.Hello(lang))
 	default:
-		fmt.Println("こんばんは")
+		fmt.Println(text.GoodEvening(lang))
 	}
 }

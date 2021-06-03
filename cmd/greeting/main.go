@@ -1,7 +1,13 @@
 package main
 
-import "github.com/kou164nkn/greeting"
+import (
+	"os"
+
+	"github.com/kou164nkn/greeting"
+)
 
 func main() {
-	greeting.Do()
+	var g greeting.Greeting
+
+	g.Do(os.Stdout)
 }

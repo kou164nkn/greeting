@@ -1,11 +1,10 @@
-// package text_test
-package text
+package text_test
 
 import (
 	"os"
 	"testing"
 
-	// "github.com/kou164nkn/greeting/pkg/text"
+	"github.com/kou164nkn/greeting/pkg/text"
 	"golang.org/x/text/language"
 )
 
@@ -63,8 +62,7 @@ func TestDefaultLang(t *testing.T) {
 				defer setEnv(t, tt.keyval...)()
 			}
 
-			// if lang := text.DefaultLang(); lang != tt.expect {
-			if lang := DefaultLang(); lang != tt.expect {
+			if lang := text.DefaultLang(); lang != tt.expect {
 				t.Errorf("want %v but got %v", tt.expect, lang)
 			}
 		})
@@ -83,7 +81,7 @@ func TestGoodMorning(t *testing.T) {
 	for name, tt := range cases {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
-			if actual := GoodMorning(tt.lang); actual != tt.expect {
+			if actual := text.GoodMorning(tt.lang); actual != tt.expect {
 				t.Errorf("want %v but got %v", tt.expect, actual)
 			}
 		})
@@ -102,7 +100,7 @@ func TestHello(t *testing.T) {
 	for name, tt := range cases {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
-			if actual := Hello(tt.lang); actual != tt.expect {
+			if actual := text.Hello(tt.lang); actual != tt.expect {
 				t.Errorf("want %v but got %v", tt.expect, actual)
 			}
 		})
@@ -121,7 +119,7 @@ func TestGoodEvening(t *testing.T) {
 	for name, tt := range cases {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
-			if actual := GoodEvening(tt.lang); actual != tt.expect {
+			if actual := text.GoodEvening(tt.lang); actual != tt.expect {
 				t.Errorf("want %v but got %v", tt.expect, actual)
 			}
 		})

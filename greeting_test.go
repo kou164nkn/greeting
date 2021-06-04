@@ -2,7 +2,8 @@ package greeting_test
 
 import (
 	"bytes"
-	_ "fmt"
+	"errors"
+	"io"
 	"testing"
 	"time"
 
@@ -10,21 +11,65 @@ import (
 	"golang.org/x/text/language"
 )
 
+func mockClock(t *testing.T, v string) greeting.Clock {
+	t.Helper()
+	now, err := time.Parse(time.RFC3339, v)
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	return greeting.ClockFunc(func() time.Time {
+		return now
+	})
+}
+
+type errorWriter struct {
+	Err error
+}
+
+func (w *errorWriter) Write(p []byte) (n int, err error) {
+	return 0, w.Err
+}
+
 func TestGreetin_Do(t *testing.T) {
-	greeting.ExportSetLang(language.Japanese)
+	greeting.ExportSetLang(language.Japanese)()
 
-	g := greeting.Greeting{
-		Clock: greeting.ClockFunc(func() time.Time {
-			return time.Date(2021, 6, 1, 06, 0, 0, 0, time.Local)
-		}),
+	cases := map[string]struct {
+		writer io.Writer
+		clock  greeting.Clock
+
+		msg       string
+		expectErr bool
+	}{
+		"04時": {new(bytes.Buffer), mockClock(t, "2021-04-01T04:00:00+09:00"), "おはよう", false},
+		"09時": {new(bytes.Buffer), mockClock(t, "2021-04-01T09:00:00+09:00"), "おはよう", false},
+		"10時": {new(bytes.Buffer), mockClock(t, "2021-04-01T10:00:00+09:00"), "こんにちは", false},
+		"16時": {new(bytes.Buffer), mockClock(t, "2021-04-01T16:00:00+09:00"), "こんにちは", false},
+		"17時": {new(bytes.Buffer), mockClock(t, "2021-04-01T17:00:00+09:00"), "こんばんは", false},
+		"03時": {new(bytes.Buffer), mockClock(t, "2021-04-01T03:00:00+09:00"), "こんばんは", false},
+		"エラー": {&errorWriter{Err: errors.New("error")}, nil, "", true},
 	}
 
-	var buf bytes.Buffer
-	if err := g.Do(&buf); err != nil {
-		t.Error("unexpected error:", err)
-	}
+	for name, tt := range cases {
+		tt := tt
 
-	if expected, actual := "おはよう", buf.String(); expected != actual {
-		t.Errorf("greeting message want %s but got %s", expected, actual)
+		t.Run(name, func(t *testing.T) {
+			g := greeting.Greeting{
+				Clock: tt.clock,
+			}
+
+			switch err := g.Do(tt.writer); true {
+			case err == nil && tt.expectErr:
+				t.Error("expected error did not occur")
+			case err != nil && !tt.expectErr:
+				t.Error("unexpected error:", err)
+			}
+
+			if buf, ok := tt.writer.(*bytes.Buffer); ok {
+				if msg := buf.String(); tt.msg != msg {
+					t.Errorf("greeting message want %s but got %s", tt.msg, msg)
+				}
+			}
+		})
 	}
 }

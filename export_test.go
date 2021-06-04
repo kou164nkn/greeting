@@ -2,11 +2,11 @@ package greeting
 
 import "golang.org/x/text/language"
 
-func ExportSetLang(l language.Tag) {
+func ExportSetLang(l language.Tag) func() {
 	orgLang := lang
 	lang = l
 
-	defer func() {
+	return func() {
 		lang = orgLang
-	}()
+	}
 }

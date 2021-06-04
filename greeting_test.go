@@ -2,7 +2,6 @@ package greeting_test
 
 import (
 	"bytes"
-	_ "fmt"
 	"testing"
 	"time"
 
@@ -10,13 +9,23 @@ import (
 	"golang.org/x/text/language"
 )
 
+func mockClock(t *testing.T, v string) greeting.Clock {
+	t.Helper()
+	now, err := time.Parse(time.RFC3339, v)
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	return greeting.ClockFunc(func() time.Time {
+		return now
+	})
+}
+
 func TestGreetin_Do(t *testing.T) {
-	greeting.ExportSetLang(language.Japanese)
+	greeting.ExportSetLang(language.Japanese)()
 
 	g := greeting.Greeting{
-		Clock: greeting.ClockFunc(func() time.Time {
-			return time.Date(2021, 6, 1, 06, 0, 0, 0, time.Local)
-		}),
+		Clock: mockClock(t, "2021-04-01T07:00:00+09:00"),
 	}
 
 	var buf bytes.Buffer

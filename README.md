@@ -1,10 +1,10 @@
-# greetingパッケージ
+package greeting
+=======
 
-golang入門の練習用パッケージ
+greeting is a package for Go training
 
-| サブコマンド名 |            |
-| ------------- | ----------- |
-| go mod init モジュール名 | 指定したモジュール名でgo.modファイルを作成する. 作成したモジュール名を省略するとGOPATHから推測する. | 
-| go mod tidy | 使用していないパッケージのgo.modからの削除. 必要なパッケージのダウンロードとgo.modへの追加 |
-| go mod why | 指定したパッケージがなぜ必要になったか表示 |
-| go mod vendor | 依存するパッケージをvendor以下にコピーする |
+## Installation
+
+```console
+% go get github.com/kou164nkn/greeting/cmd/greeting
+```
